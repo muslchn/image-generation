@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Notebook runtime state
+.ipynb_checkpoints/
+
+# Model/cache artifacts
+models/
+checkpoints/
+*.ckpt
+*.safetensors
+*.bin
+
+# OS/browser metadata
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+
+# Local reference package from Dicoding, kept out of the root submission repo.
+docs/
+submission/
