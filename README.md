@@ -95,13 +95,13 @@ Recommended workflow:
 3. Run the dependency installation cell.
 4. Run the cell that writes `logic.py`.
 5. Run the cell that writes `app.py`.
-6. Set your private Ngrok auth token in the `auth_token` variable.
+6. Enter your private Ngrok auth token only when the hidden runtime prompt appears.
 7. Run the Streamlit launch cell.
 8. Run the Ngrok public URL cell.
 9. Open the generated public URL.
 10. Test the image generation flow from the Streamlit interface.
 
-Do not commit or share your Ngrok auth token.
+Do not commit, record, or share your Ngrok auth token. If a token was ever stored in a notebook or exposed elsewhere, revoke it and generate a replacement before continuing.
 
 ## Streamlit Demo Checklist
 
