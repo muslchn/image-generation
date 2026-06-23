@@ -109,7 +109,7 @@ When testing the app, verify these interactions:
 
 - The app opens successfully in the browser.
 - Prompt and negative prompt inputs are editable.
-- Quality steps and CFG sliders work.
+- Quality steps and prompt-guidance (CFG) sliders work.
 - Scheduler selection works for Euler A, DPM++, and DDIM.
 - Batch size can be set from 1 to 4.
 - The Generate button produces and displays image output.
@@ -125,13 +125,13 @@ Suggested recording sequence:
 
 1. Open the Streamlit app through the Ngrok URL.
 2. Enter a prompt and negative prompt.
-3. Adjust `Quality Steps`, `Creativity (CFG)`, seed, scheduler, and batch size.
+3. Use the reviewer-aligned astronaut-on-the-moon prompt and provided negative prompt, then adjust `Quality Steps`, `Prompt Guidance (CFG)`, seed, scheduler, and batch size.
 4. Click Generate.
 5. Wait until generated images appear.
 6. Show the 2x2 grid if using batch generation.
 7. Click Clear Memory.
 8. Open the Edit tab.
-9. Draw a mask and run inpainting.
+9. Draw a generous mask on the lunar surface and run inpainting with the default broken-satellite prompt, CFG 12, and 50 steps; verify the satellite is clearly visible.
 10. Run outpainting or zoom-out.
 
 Save the video with this exact filename:

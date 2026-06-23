@@ -9,6 +9,7 @@ __pycache__/
 .venv/
 venv/
 env/
+.env
 
 # Notebook runtime state
 .ipynb_checkpoints/
@@ -27,5 +28,6 @@ Thumbs.db
 
 # Local reference package from Dicoding, kept out of the root submission repo.
 docs/
+review/
 submission/
 video_demo_aplikasi_BFGAI.mp4

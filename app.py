@@ -23,8 +23,8 @@ st.title("StudioAI: Stable Diffusion Image Suite")
 
 with st.sidebar:
     st.header("Parameters")
-    steps = st.slider("Quality Steps", 15, 50, 30)
-    cfg = st.slider("Creativity (CFG)", 1.0, 20.0, 7.5)
+    steps = st.slider("Quality Steps", 15, 50, 40)
+    cfg = st.slider("Prompt Guidance (CFG)", 1.0, 20.0, 8.0)
     seed = st.number_input("Seed Control", value=222, step=1)
 
     st.divider()
@@ -47,12 +47,12 @@ with tab_gen:
         with st.form(key="gen_form"):
             prompt = st.text_area(
                 "Prompt",
-                "a dreamy hand drawn sci-fi illustration of a tiny astronaut floating near a colorful planet",
+                "an astronaut standing on moon surface, earth visible in background, cartoon style, flat 2D illustration, clear contours",
                 height=150,
             )
             neg_prompt = st.text_input(
                 "Negative Prompt",
-                "photorealistic, realistic, photograph, 3d render, messy, blurry, low quality, bad art, ugly",
+                logic.DEFAULT_NEGATIVE_PROMPT,
             )
             submit_gen = st.form_submit_button("Generate", type="primary")
 
@@ -113,6 +113,10 @@ with tab_edit:
 
             with col_tools:
                 st.subheader("Draw Mask")
+                st.caption(
+                    "Mask only an empty area of the lunar ground. Do not cover the astronaut "
+                    "when adding the crashed satellite."
+                )
                 canvas_result = st_canvas(
                     fill_color="rgba(255, 255, 255, 1.0)",
                     stroke_width=20,
@@ -128,8 +132,16 @@ with tab_edit:
             with col_result:
                 st.subheader("Settings")
                 with st.form("inpaint_input"):
-                    edit_prompt = st.text_input("Edit Prompt", "a broken satellite floating in space")
-                    strength = st.slider("Strength", 0.1, 1.0, 0.85)
+                    edit_prompt = st.text_area(
+                        "Edit Prompt",
+                        "a large damaged broken satellite lying on the empty moon surface to the right of the astronaut, "
+                        "with a clear body, broken solar panels, metallic debris, exposed mechanical parts, lunar craters, "
+                        "sharp silhouette, flat 2D cartoon illustration",
+                        height=150,
+                    )
+                    strength = st.slider("Strength", 0.1, 1.0, 1.0)
+                    inpaint_cfg = st.slider("Inpainting CFG", 1.0, 20.0, 12.0)
+                    inpaint_steps = st.slider("Inpainting Steps", 20, 80, 50)
                     submit_inpaint = st.form_submit_button("Run Inpainting", type="primary")
 
                 if submit_inpaint:
@@ -149,7 +161,16 @@ with tab_edit:
                             if mask_image.size != source_img.size:
                                 mask_image = mask_image.resize(source_img.size, resample=Image.NEAREST)
                             mask_image = mask_image.filter(ImageFilter.MaxFilter(15))
-                            result_img = logic.run_inpainting(pipe_inpaint, source_img, mask_image, edit_prompt, strength)
+                            result_img = logic.run_inpainting(
+                                pipe_inpaint,
+                                source_img,
+                                mask_image,
+                                edit_prompt,
+                                strength=strength,
+                                guidance_scale=inpaint_cfg,
+                                num_inference_steps=inpaint_steps,
+                                seed=9,
+                            )
                             st.session_state["current_image"] = result_img
                             st.session_state["canvas_key"] += 1
                         st.rerun()
@@ -164,7 +185,7 @@ with tab_edit:
                 with st.form("outpaint_input"):
                     out_prompt = st.text_input(
                         "Full Image Prompt",
-                        "wide angle view of the same illustrated sci-fi astronaut scene, detailed background",
+                        "wide view of an astronaut standing on the moon, earth in the background, flat 2D cartoon illustration, clear contours",
                     )
                     submit_outpaint = st.form_submit_button("Zoom Out", type="primary")
 

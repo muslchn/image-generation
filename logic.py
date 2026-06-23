@@ -12,6 +12,14 @@ from PIL import Image, ImageFilter
 
 BASE_MODEL_ID = "runwayml/stable-diffusion-v1-5"
 INPAINT_MODEL_ID = "runwayml/stable-diffusion-inpainting"
+DEFAULT_NEGATIVE_PROMPT = (
+    "photorealistic, realistic, photograph, 3d render, messy, blurry, "
+    "low quality, bad art, ugly, sketch, grainy, unfinished, chromatic aberration"
+)
+INPAINT_NEGATIVE_PROMPT = (
+    DEFAULT_NEGATIVE_PROMPT
+    + ", astronaut, person, human, character, backpack, spacesuit, helmet"
+)
 
 
 def _device():
@@ -70,6 +78,10 @@ def set_scheduler(pipe, scheduler_name):
 
 @torch.inference_mode()
 def generate_image(pipe, prompt, neg_prompt, seed, steps, cfg, num_images=1, scheduler_name="Euler A"):
+    prompt = str(prompt).strip()
+    if not prompt:
+        raise ValueError("Prompt must not be empty.")
+
     pipe = set_scheduler(pipe, scheduler_name)
     num_images = max(1, min(int(num_images), 4))
     generators = [_generator(int(seed) + idx) for idx in range(num_images)]
@@ -85,22 +97,38 @@ def generate_image(pipe, prompt, neg_prompt, seed, steps, cfg, num_images=1, sch
 
 
 @torch.inference_mode()
-def run_inpainting(pipe, image, mask, prompt, strength):
+def run_inpainting(
+    pipe,
+    image,
+    mask,
+    prompt,
+    strength=1.0,
+    guidance_scale=12.0,
+    num_inference_steps=50,
+    seed=9,
+    negative_prompt=INPAINT_NEGATIVE_PROMPT,
+):
+    prompt = str(prompt).strip()
+    if not prompt:
+        raise ValueError("Inpainting prompt must not be empty.")
     if image.mode != "RGB":
         image = image.convert("RGB")
     if mask.mode != "L":
         mask = mask.convert("L")
     if image.size != mask.size:
         mask = mask.resize(image.size, resample=Image.NEAREST)
+    if mask.getbbox() is None:
+        raise ValueError("Draw a non-empty mask before running inpainting.")
 
     result = pipe(
         prompt=prompt,
+        negative_prompt=negative_prompt,
         image=image,
         mask_image=mask,
         strength=float(strength),
-        guidance_scale=8.0,
-        num_inference_steps=35,
-        generator=_generator(9),
+        guidance_scale=float(guidance_scale),
+        num_inference_steps=int(num_inference_steps),
+        generator=_generator(seed),
     )
     return result.images[0]
 
