@@ -16,10 +16,6 @@ DEFAULT_NEGATIVE_PROMPT = (
     "photorealistic, realistic, photograph, 3d render, messy, blurry, "
     "low quality, bad art, ugly, sketch, grainy, unfinished, chromatic aberration"
 )
-INPAINT_NEGATIVE_PROMPT = (
-    DEFAULT_NEGATIVE_PROMPT
-    + ", astronaut, person, human, character, backpack, spacesuit, helmet"
-)
 
 
 def _device():
@@ -106,7 +102,7 @@ def run_inpainting(
     guidance_scale=12.0,
     num_inference_steps=50,
     seed=9,
-    negative_prompt=INPAINT_NEGATIVE_PROMPT,
+    negative_prompt=DEFAULT_NEGATIVE_PROMPT,
 ):
     prompt = str(prompt).strip()
     if not prompt:

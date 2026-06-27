@@ -113,10 +113,6 @@ with tab_edit:
 
             with col_tools:
                 st.subheader("Draw Mask")
-                st.caption(
-                    "Mask only an empty area of the lunar ground. Do not cover the astronaut "
-                    "when adding the crashed satellite."
-                )
                 canvas_result = st_canvas(
                     fill_color="rgba(255, 255, 255, 1.0)",
                     stroke_width=20,
@@ -134,9 +130,7 @@ with tab_edit:
                 with st.form("inpaint_input"):
                     edit_prompt = st.text_area(
                         "Edit Prompt",
-                        "a large damaged broken satellite lying on the empty moon surface to the right of the astronaut, "
-                        "with a clear body, broken solar panels, metallic debris, exposed mechanical parts, lunar craters, "
-                        "sharp silhouette, flat 2D cartoon illustration",
+                        "a large damaged broken satellite crashed on the moon surface, lunar craters, metallic debris, broken solar panels, exposed mechanical parts, clear silhouette, sharp focus, matching cartoon illustration style",
                         height=150,
                     )
                     strength = st.slider("Strength", 0.1, 1.0, 1.0)
